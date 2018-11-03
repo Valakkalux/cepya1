@@ -11,77 +11,42 @@ use App\niveles;
 use App\grupo;
 use App\grado;
 use App\materias;
-use App\calificacion;
+use App\calificaciones;
 use App\ciclosescolares;
 
-class Calificaciones extends Controller
+class Calificacion extends Controller
 {
     public function altacalificaciones()
     {
-		// ORM ELOQUENT
-		//select * from carreras
-		//$carreras=carreras::all();
-		/*/select * from carreras where activo = 'si' order by nombre asc
-			$usuarios=usuarios::where('activo','=','Si')
+			$alumno=alumno::where('activo','=','Si')
 		                    ->orderBy('nombre','Asc')
 							->get();
-
-			$niveles=niveles::orderBy('nivel','Asc')
-							->get();
-
-			$grupo=grupo::orderBy('nombre','Asc')
-							->get();
-
-			$grado=grado::orderBy('nombre','Asc')
-							->get();
-
-			$materias=materias::orderBy('nombre','Asc')
-							->get();
-
-			$ciclo=ciclosescolares::orderBy('ciclo','Asc')
-							->get();
-
-		    $clavequesigue = alumno::withTrashed()->orderBy('id_a','nombre')
-								->take(1)
-								->get();
-        //   $idas = $clavequesigue[0]->id_a+1;
-		//return $carreras;*/
-	   return view ("sistema.calificacion");
-	   ->with('usuarios',$usuarios)
-	   ->with('niveles',$niveles)
-	   ->with('grupo',$grupo)
-	   ->with('grado',$grado)
-	   ->with('materias',$materias)
-	   ->with('ciclo',$ciclo);
-	   //->with('idas',$idas);
-
+	   return view ("sistema.calificacion")
+	   ->with('alumno',$alumno);
 	}	
-    public function guardcalificaciones(request $request)
+    public function guardacalificaciones(Request $request)
     {
-		$nombre = $request->nombre;
+		$id_cal = $request->id_cal;
+		$esp = $request->esp;
+		$mat = $request->mat;
+		$his = $request->his;
 		$id_a = $request->id_a;
-		$ap_p = $request->ap_p;
-		$ap_m = $request->ap_m;
 		///NUNCA SE RECIBEN LOS ARCHIVOS
 		$this->validate($request,[
-	    // 'id_a'=>'required|numeric',
-		 'nombre'=>'required',['regex:/^[A-Z][A-Z,a-z, ,ñ,á,é,í,ó,ú]+$/']
+		 'esp'=>'required|numeric',
+		 'mat'=>'required|numeric',
+		 'his'=>'required|numeric'
 	     ]);
 
-		    $alumn = new alumno;
-			$alumn->id_a = $request->id_a;
-			$alumn->nombre = $request->nombre;
-			$alumn->ap_p = $request->ap_p;
-			$alumn->ap_m = $request->ap_m;
-			$alumn->id_usu = $request->id_usu;
-			$alumn->id_n = $request->id_n;
-			$alumn->id_gra = $request->id_gra;
-			$alumn->id_gru = $request->id_gru;
-			$alumn->id_ma = $request->id_ma;
-			$alumn->id_ciclo = $request->id_ciclo;
-			$alumn->save();
+		    $gru = new calificaciones;
+			$gru->id_cal = $request->id_cal;
+			$gru->esp = $request->esp;
+			$gru->mat = $request->mat;
+			$gru->his = $request->his;
+			$gru->id_a = $request->id_a;
+			$gru->save();
 
-		$proceso = "ALTA DEcalificaciones";	
+		$proceso = "ALTA DE calificaciones";	
 	    $mensaje="Registro guardado correctamente";
 		return view('sistema.mensaje')
 		->with('proceso',$proceso)
@@ -91,10 +56,12 @@ class Calificaciones extends Controller
 	public function reportecalificaciones()
 	{
 
-	$alumno = alumno::withTrashed()
-				->orderBy('id_a','nombre')->get();
+	$calificaciones=\DB::select("SELECT c.id_cal,c.esp,c.mat,c.his,a.nombre AS alum,c.deleted_at
+		from calificaciones AS c
+		INNER JOIN alumnos AS a on a.id_a = c.id_a");
 	return view ('sistema.reportecalificaciones')
-	->with('alumno',$alumno);
+	->with('calificaciones',$calificaciones);
+//	return $calificaciones;
 	
 	}
 	public function eliminam($idm)

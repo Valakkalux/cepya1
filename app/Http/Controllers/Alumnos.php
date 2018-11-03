@@ -44,7 +44,7 @@ class Alumnos extends Controller
 		    $clavequesigue = alumno::withTrashed()->orderBy('id_a','nombre')
 								->take(1)
 								->get();
-        //   $idas = $clavequesigue[0]->id_a+1;
+           $idas = $clavequesigue[0]->id_a+1;
 		//return $carreras;
 	   return view ("sistema.altaalumno")
 	   ->with('usuarios',$usuarios)
@@ -52,22 +52,24 @@ class Alumnos extends Controller
 	   ->with('grupo',$grupo)
 	   ->with('grado',$grado)
 	   ->with('materias',$materias)
-	   ->with('ciclo',$ciclo);
-	   //->with('idas',$idas);
+	   ->with('ciclo',$ciclo)
+	   ->with('idas',$idas);
 
 	}	
-    public function guardaalumno(request $request)
+    public function guardaalumno(Request $request)
     {
+    	$id_a = $request->id_a;
 		$nombre = $request->nombre;
-		$id_a = $request->id_a;
 		$ap_p = $request->ap_p;
 		$ap_m = $request->ap_m;
 		///NUNCA SE RECIBEN LOS ARCHIVOS
+		
+
 		$this->validate($request,[
-	    // 'id_a'=>'required|numeric',
-		 'nombre'=>'required',['regex:/^[A-Z][A-Z,a-z, ,ñ,á,é,í,ó,ú]+$/'],
-		 'ap_p'=>'required',['regex:/^[A-Z][A-Z,a-z, ,ñ,á,é,í,ó,ú]+$/'],
-		 'ap_m'=>'required',['regex:/^[A-Z][A-Z,a-z, ,ñ,á,é,í,ó,ú]+$/']
+	    //'id_a'=>'required|numeric',
+		 'nombre'=>['required','regex:/^[A-Z][A-Z,a-z, ,ñ,á,é,í,ó,ú]+$/'],
+		 'ap_p'=>['required','regex:/^[A-Z][A-Z,a-z, ,ñ,á,é,í,ó,ú]+$/'],
+		 'ap_m'=>['required','regex:/^[A-Z][A-Z,a-z, ,ñ,á,é,í,ó,ú]+$/']
 	     ]);
 
 		    $alumn = new alumno;
@@ -79,7 +81,7 @@ class Alumnos extends Controller
 			$alumn->id_n = $request->id_n;
 			$alumn->id_gra = $request->id_gra;
 			$alumn->id_gru = $request->id_gru;
-			$alumn->id_ma = $request->id_ma;
+		
 			$alumn->id_ciclo = $request->id_ciclo;
 			$alumn->save();
 
@@ -184,6 +186,28 @@ class Alumnos extends Controller
 		
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use App\grupo;
 use App\grado;
 
 
-class Grados extends Controller
+class grupos extends Controller
 {
-    public function altagrados()
+    public function altagrupos()
     {
 		// ORM ELOQUENT
 		//select * from carreras
@@ -19,23 +20,27 @@ class Grados extends Controller
 		
         //   $idas = $clavequesigue[0]->id_a+1;
 		//return $carreras;
-	   return view ("sistema.altagrados");
+		$grado=grado::orderBy('nombre','Asc')
+							->get();
+	   return view ("sistema.altagrupos")
+	   ->with('grado',$grado);
 	   //->with('idas',$idas);
 
 	}	
-    public function guardagrados(request $request)
+    public function guardagrupos(request $request)
     {
 		$nombre = $request->nombre;
 		///NUNCA SE RECIBEN LOS ARCHIVOS
 		$this->validate($request,[
 	    // 'id_a'=>'required|numeric',
-		 'nombre'=>['required','regex:/^[0-9]$/']
+		 'nombre'=>['required','regex:/^[A-Z]$/']
 	     ]);
 
-		    $grad = new grado;
-			$grad->id_gra = $request->id_gra;
-			$grad->nombre = $request->nombre;
-			$grad->save();
+		    $grup = new grupo;
+			$grup->id_gru = $request->id_gru;
+			$grup->nombre = $request->nombre;
+			$grup->id_gra = $request->id_gra;
+			$grup->save();
 
 		$proceso = "ALTA DE alumno";	
 	    $mensaje="Registro guardado correctamente";
@@ -44,13 +49,13 @@ class Grados extends Controller
 		->with('mensaje',$mensaje);
 	}		
 	
-	public function reportegrados()
+	public function reportegrupos()
 	{
 
-	$grado = grado::withTrashed()
-				->orderBy('id_gra','nombre')->get();
-	return view ('sistema.reportegrados')
-				->with('grado',$grado);
+	$grupo = grupo::withTrashed()
+				->orderBy('id_gru','nombre')->get();
+	return view ('sistema.reportegrupos')
+	->with('grupo',$grupo);
 	
 	}
 	public function eliminam($idm)
@@ -138,25 +143,3 @@ class Grados extends Controller
 		
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -5,36 +5,36 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use App\ciclosescolares;
 use App\grado;
 
-
-class Grados extends Controller
+class cicloescolar extends Controller
 {
-    public function altagrados()
+    public function altaciclos()
     {
-		// ORM ELOQUENT
-		//select * from carreras
-		//$carreras=carreras::all();
-		//select * from carreras where activo = 'si' order by nombre asc
-		
-        //   $idas = $clavequesigue[0]->id_a+1;
-		//return $carreras;
-	   return view ("sistema.altagrados");
-	   //->with('idas',$idas);
+			$grado=grado::withTrashed()->orderBy('nombre','Asc')
+							->get();
+		    $clavequesigue = ciclosescolares::withTrashed()->orderBy('id_ciclo','nombre')
+								->take(1)
+								->get();
+            $idcs = $clavequesigue[0]->id_ciclo+1;
+	    return view ("sistema.altaciclos")
+		->with('grado',$grado)
+	    ->with('idcs',$idcs);
 
 	}	
-    public function guardagrados(request $request)
+    public function guardaciclos(request $request)
     {
-		$nombre = $request->nombre;
+		$ciclo = $request->ciclo;
 		///NUNCA SE RECIBEN LOS ARCHIVOS
 		$this->validate($request,[
 	    // 'id_a'=>'required|numeric',
-		 'nombre'=>['required','regex:/^[0-9]$/']
+		 'ciclo'=>['required','regex:/^[0-9]{4}[-][0-9]{4}$/'],
 	     ]);
 
-		    $grad = new grado;
+		    $grad = new ciclosescolares;
 			$grad->id_gra = $request->id_gra;
-			$grad->nombre = $request->nombre;
+			$grad->ciclo = $request->ciclo;
 			$grad->save();
 
 		$proceso = "ALTA DE alumno";	
@@ -44,13 +44,13 @@ class Grados extends Controller
 		->with('mensaje',$mensaje);
 	}		
 	
-	public function reportegrados()
+	public function reporteciclos()
 	{
 
-	$grado = grado::withTrashed()
-				->orderBy('id_gra','nombre')->get();
-	return view ('sistema.reportegrados')
-				->with('grado',$grado);
+	$ciclosescolares = ciclosescolares::withTrashed()
+				->orderBy('id_ciclo','asc')->get();
+	return view ('sistema.reporteciclos')
+				->with('ciclosescolares',$ciclosescolares);
 	
 	}
 	public function eliminam($idm)
